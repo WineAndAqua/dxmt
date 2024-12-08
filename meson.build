@@ -6,6 +6,8 @@ project('dxmt', ['c', 'cpp'], version : 'v0.1', default_options : [
   'b_ndebug=if-release',
 ])
 
+fs = import('fs')
+
 cpp = meson.get_compiler('cpp')
 cc = meson.get_compiler('c')
 clang = meson.get_compiler('c', native: true)
@@ -76,6 +78,11 @@ wrc_generator = generator(wrc,
   output    : [ '@BASENAME@' + res_ext ],
   arguments : [ '-i', '@INPUT@', '-o', '@OUTPUT@' ],
 )
+
+wine_build = find_program('winebuild')
+wine_build_path = wine_build.full_path()
+wine_build_path = fs.parent(fs.parent(wine_build_path))
+message('Wine full path: '+ wine_build_path)
 
 add_project_arguments(cpp.get_supported_arguments(compiler_args), language: 'cpp')
 add_project_arguments(clangpp.get_supported_arguments(native_compiler_args), language: 'cpp', native: true)

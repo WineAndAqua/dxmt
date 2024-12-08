@@ -5,7 +5,7 @@ winemetal_unix_src = [
 if wine_build_path == ''
   winemac_so = join_paths(meson.source_root(), 'toolchains/wine/lib/wine/x86_64-unix/winemac.so')
 else
-  winemac_so = join_paths(wine_build_path, 'dlls/winemac.drv/winemac.so')
+  winemac_so = join_paths(wine_build_path, 'lib/wine/x86_64-unix/winemac.so')
 endif
 
 winemetal_unix_ld_args = [
