@@ -21,6 +21,14 @@ if native_llvm_path.startswith('/usr/local/opt')
   ]
 endif
 
+if native_llvm_path.startswith('/opt/local')
+  llvm_include_path_darwin = include_directories('/opt/local/libexec/llvm-15/include')
+  llvm_ld_flags_darwin = [
+    '-L/opt/local/libexec/llvm-15/lib', '-L/opt/local/lib',
+    '-lm', '-lz', '-lcurses', '-lxml2', '-lzstd'
+  ]
+endif
+
 airconv_lib_darwin = static_library('airconv', airconv_src,
   include_directories : [ dxmt_include_path, llvm_include_path_darwin ],
   cpp_args            : [ '-ObjC++', llvm_cxx_flags  ],
