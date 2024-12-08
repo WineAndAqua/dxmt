@@ -66,8 +66,8 @@ initialize_io_hook() {
     return;
   if (env::getEnvVar("MTL_CAPTURE_ENABLED") != "1")
     return;
-  if (env::getExeBaseName() != env::getEnvVar("DXMT_CAPTURE_EXECUTABLE"))
-    return;
+//  if (env::getExeBaseName() != env::getEnvVar("DXMT_CAPTURE_EXECUTABLE"))
+//    return;
   global_hook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, GetModuleHandle(NULL), 0);
   if (!global_hook) {
     ERR("Failed to register windows hook");

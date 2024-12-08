@@ -125,7 +125,7 @@ CommandQueue::CommitChunkInternal(CommandChunk &chunk, uint64_t seq) {
     std::time_t now;
     std::time(&now);
     std::strftime(filename, 1024, "-capture-%H-%M-%S_%m-%d-%y.gputrace", std::localtime(&now));
-    auto fileUrl = env::getUnixPath(env::getExeBaseName() + filename);
+    auto fileUrl = env::getEnvVar("DXMT_CAPTURE_PATH") + "/" + env::getExeBaseName() + filename;
     WARN("A new capture will be saved to ", fileUrl);
     NS::URL *pURL = NS::URL::alloc()->initFileURLWithPath(NS::String::string(fileUrl.c_str(), NS::UTF8StringEncoding));
 
