@@ -123,6 +123,11 @@ public:
     }
     pipelineDescriptor->setRasterizationEnabled(RasterizationEnabled);
 
+    if (hull_reflection.Tessellator.MaxFactor == 15 &&
+        hull_reflection.Tessellator.Partition == microsoft::D3D11_SB_TESSELLATOR_PARTITIONING_FRACTIONAL_ODD) {
+        hull_reflection.Tessellator.MaxFactor = 16;
+    }
+
     pipelineDescriptor->setMaxTessellationFactor(
         hull_reflection.Tessellator.MaxFactor);
     switch ((microsoft::D3D11_SB_TESSELLATOR_PARTITIONING)
