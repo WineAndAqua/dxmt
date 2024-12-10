@@ -124,6 +124,13 @@ public:
       pBlendState->SetupMetalPipelineDescriptor(pipelineDescriptor, num_rtvs);
     }
 
+    WARN("pipelineDescriptor->setMaxTessellationFactor: ", hull_reflection.Tessellator.MaxFactor);
+    WARN("D3D11_SB_TESSELLATOR_PARTITIONING: ", hull_reflection.Tessellator.Partition);
+    if (hull_reflection.Tessellator.MaxFactor == 15 &&
+        hull_reflection.Tessellator.Partition == microsoft::D3D11_SB_TESSELLATOR_PARTITIONING_FRACTIONAL_ODD) {
+        hull_reflection.Tessellator.MaxFactor = 16;
+    }
+
     pipelineDescriptor->setMaxTessellationFactor(
         hull_reflection.Tessellator.MaxFactor);
     switch ((microsoft::D3D11_SB_TESSELLATOR_PARTITIONING)
