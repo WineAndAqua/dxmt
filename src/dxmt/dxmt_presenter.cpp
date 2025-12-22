@@ -8,10 +8,14 @@
 
 namespace dxmt {
 
-Presenter::Presenter(WMT::Device device, WMT::MetalLayer layer, InternalCommandLibrary &lib, float scale_factor) :
+Presenter::Presenter(
+    WMT::Device device, WMT::MetalLayer layer, InternalCommandLibrary &lib, float scale_factor,
+    DXMTGammaCurve *gamma_curve
+) :
     device_(device),
     layer_(layer),
-    lib_(lib) {
+    lib_(lib),
+    gamma_curve_(gamma_curve) {
   layer_.getProps(layer_props_);
   layer_props_.device = device;
   layer_props_.opaque = true;
