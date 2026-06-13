@@ -50,6 +50,7 @@ auto readOperandRelativeIndex(
 
   default:
     DXASSERT_DXBC(false);
+    std::abort();
   };
 };
 
@@ -67,11 +68,12 @@ auto readOperandIndex(
 
   case D3D10_SB_OPERAND_INDEX_IMMEDIATE64:
     DXASSERT_DXBC(false);
+    std::abort();
     break;
 
   case D3D10_SB_OPERAND_INDEX_RELATIVE: {
     return readOperandRelativeIndex(OpIndex, phase, 0);
-  };
+  }
 
   case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE: {
     return readOperandRelativeIndex(OpIndex, phase, OpIndex.m_RegIndex);
@@ -79,10 +81,12 @@ auto readOperandIndex(
 
   case D3D10_SB_OPERAND_INDEX_IMMEDIATE64_PLUS_RELATIVE:
     DXASSERT_DXBC(false);
+    std::abort();
     break;
 
   default:
     DXASSERT_DXBC(false);
+    std::abort();
     break;
   }
 };
@@ -158,6 +162,7 @@ auto readDstOperand(
 
   default:
     assert(0 && "Unhandled operand type");
+    std::abort();
   }
 }
 
@@ -184,6 +189,7 @@ auto readSrcOperandSwizzle(const microsoft::D3D10ShaderBinary::COperandBase &O
     DXASSERT_DXBC(false && "can not read swizzle from mask");
     // DXASSERT_DXBC(O.m_WriteMask >> 4 == 0b1111);
     // return swizzle_identity;
+    std::abort();
   }
   }
 }
@@ -301,6 +307,7 @@ SrcOperand readSrcOperand(
   case D3D10_SB_OPERAND_TYPE_RASTERIZER: {
     DXASSERT_DXBC(O.m_IndexDimension == D3D10_SB_OPERAND_INDEX_0D);
     DXASSERT_DXBC(false); // ?
+    std::abort();
     break;
   }
   case D3D10_SB_OPERAND_TYPE_CONSTANT_BUFFER: {
@@ -409,6 +416,7 @@ SrcOperand readSrcOperand(
   }
   default:
     DXASSERT_DXBC(false && "unhandled src operand");
+    std::abort();
   }
 };
 
@@ -433,6 +441,7 @@ auto readSrcOperandResource(
     }
   } else {
     assert(0 && "interface resource is not supported yet");
+    std::abort();
   }
 }
 
@@ -521,6 +530,7 @@ std::variant<AtomicDstOperandUAV, AtomicOperandTGSM> readAtomicDst(
     };
   }
   assert(0 && "unexpected atomic operation destination");
+  std::abort();
 }
 
 std::variant<SrcOperandResource, SrcOperandUAV, SrcOperandTGSM> readTypelessSrc(
@@ -535,6 +545,7 @@ std::variant<SrcOperandResource, SrcOperandUAV, SrcOperandTGSM> readTypelessSrc(
     return readSrcOperandTGSM(O);
   }
   assert(0 && "unexpected typeless load/store operation destination");
+  std::abort();
 }
 
 std::variant<SrcOperandResource, SrcOperandUAV> readSrcResourceOrUAV(
@@ -546,6 +557,7 @@ std::variant<SrcOperandResource, SrcOperandUAV> readSrcResourceOrUAV(
     return readSrcOperandResource(O, phase);
   }
   assert(0 && "unexpected resource operation destination");
+  std::abort();
 }
 
 auto
@@ -2098,6 +2110,7 @@ Instruction readInstruction(
   default: {
     llvm::outs() << "unhandled dxbc instruction " << Inst.OpCode() << "\n";
     assert(0 && "unhandled dxbc instruction");
+    std::abort();
   }
   }
 };

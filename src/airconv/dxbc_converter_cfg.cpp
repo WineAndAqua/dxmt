@@ -37,6 +37,7 @@ to_shader_resource_type(D3D10_SB_RESOURCE_DIMENSION dim) {
     return ResourceType::TextureCubeArray;
   }
   assert(0 && "invalid D3D10_SB_RESOURCE_DIMENSION");
+  std::abort();
 };
 
 inline ScalerDataType
@@ -59,6 +60,7 @@ to_shader_scaler_type(microsoft::D3D10_SB_RESOURCE_RETURN_TYPE type) {
     break;
   }
   assert(0 && "invalid D3D10_SB_RESOURCE_RETURN_TYPE");
+  std::abort();
 };
 
 std::vector<std::unique_ptr<BasicBlock>>
@@ -339,6 +341,7 @@ read_control_flow(
         break;
       default:
         DXASSERT_DXBC(false);
+        std::abort();
       }
       shader_info.cbufferMap[RangeID] = {
           .range =
@@ -365,6 +368,7 @@ read_control_flow(
         break;
       default:
         DXASSERT_DXBC(false);
+        std::abort();
       }
       shader_info.samplerMap[RangeID] = {
           .range = {.range_id = RangeID, .lower_bound = LB, .size = RangeSize, .space = Inst.m_SamplerDecl.Space},

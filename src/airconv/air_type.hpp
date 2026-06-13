@@ -82,6 +82,7 @@ public:
       return _float4;
     }
     assert(0 && "input is not a scalar or not implemented.");
+    std::abort();
   };
 
   llvm::LLVMContext &context;

@@ -45,6 +45,7 @@ to_air_interpolation(microsoft::D3D10_SB_INTERPOLATION_MODE mode) {
     return air::Interpolation::center_no_perspective;
   default:
     assert(0 && "Unexpected D3D10_SB_INTERPOLATION_MODE");
+    std::abort();
   }
 }
 
@@ -112,6 +113,7 @@ void handle_signature_vs(
     }
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     max_input_register = std::max(reg + 1, max_input_register);
@@ -156,6 +158,7 @@ void handle_signature_vs(
     }
     default:
       assert(0 && "unhandled vertex shader input");
+      std::abort();
       break;
     }
     break;
@@ -237,6 +240,7 @@ void handle_signature_vs(
     }
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     max_output_register = std::max(reg + 1, max_output_register);
@@ -267,6 +271,7 @@ void handle_signature_vs(
     }
     default:
       assert(0 && "unhandled vertex shader output");
+      std::abort();
       break;
     }
     break;
@@ -336,9 +341,11 @@ void handle_signature_ps(
     }
     case D3D11_SB_OPERAND_TYPE_INNER_COVERAGE:
       assert(0);
+      std::abort();
       break;
     default:
       assert(0 && "unimplemented vertex input");
+      std::abort();
       break;
     }
     break;
@@ -389,6 +396,7 @@ void handle_signature_ps(
       break;
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     signature_handlers.push_back([=](SignatureContext &ctx) {
@@ -420,6 +428,7 @@ void handle_signature_ps(
       break;
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     signature_handlers.push_back([=](SignatureContext &ctx) {
@@ -475,6 +484,7 @@ void handle_signature_ps(
   case D3D10_SB_OPCODE_DCL_OUTPUT_SGV: {
     assert(0 && "dcl_output_sgv should not happen for now");
     // only GS PrimitiveID uses this, but we don't support GS for now
+    std::abort();
     break;
   }
   case D3D10_SB_OPCODE_DCL_OUTPUT_SIV: {
@@ -484,6 +494,7 @@ void handle_signature_ps(
     switch (siv) {
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     max_output_register = std::max(reg + 1, max_output_register);
@@ -627,12 +638,14 @@ void handle_signature_ps(
     }
     default:
       assert(0 && "unhandled pixel shader output");
+      std::abort();
       break;
     }
     break;
   }
   default:
     assert(0 && "unhandled pixel shader output");
+    std::abort();
     break;
   }
 };
@@ -656,6 +669,7 @@ void handle_signature_hs(
     switch (sgv) {
     default:
       assert(0 && "Unexpected/unhandled hull shader sgv");
+      std::abort();
       break;
     }
     max_input_register = std::max(reg + 1, max_input_register);
@@ -687,6 +701,7 @@ void handle_signature_hs(
 
     default:
       assert(0 && "unhandled hull shader input");
+      std::abort();
       break;
     }
     break;
@@ -694,6 +709,7 @@ void handle_signature_hs(
   case D3D10_SB_OPCODE_DCL_OUTPUT_SGV: {
     assert(0 && "dcl_output_sgv should not happen for now");
     // only GS PrimitiveID uses this, but we don't support GS for now
+    std::abort();
     break;
   }
   case D3D10_SB_OPCODE_DCL_OUTPUT_SIV: {
@@ -748,6 +764,7 @@ void handle_signature_hs(
     }
     default:
       assert(0 && "Unexpected/unhandled hull shader output siv");
+      std::abort();
       break;
     }
     if (phase != ~0u) {
@@ -785,6 +802,7 @@ void handle_signature_hs(
     }
     default:
       assert(0 && "unhandled hull shader output");
+      std::abort();
       break;
     }
     break;
@@ -840,6 +858,7 @@ void handle_signature_ds(
     }
     default:
       assert(0 && "unhandled dcl_input_siv in domain shader");
+      std::abort();
     }
 
     break;
@@ -873,6 +892,7 @@ void handle_signature_ds(
       break;
     default:
       assert(0 && "unhandeld domain shader input");
+      std::abort();
       break;
     }
     break;
@@ -880,6 +900,7 @@ void handle_signature_ds(
   case D3D10_SB_OPCODE_DCL_OUTPUT_SGV: {
     assert(0 && "dcl_output_sgv should not happen for now");
     // only GS PrimitiveID uses this, but we don't support GS for now
+    std::abort();
     break;
   }
   case D3D10_SB_OPCODE_DCL_OUTPUT_SIV: {
@@ -932,6 +953,7 @@ void handle_signature_ds(
     }
     default:
       assert(0 && "Unexpected/unhandled input system value");
+      std::abort();
       break;
     }
     max_output_register = std::max(reg + 1, max_output_register);
@@ -963,6 +985,7 @@ void handle_signature_ds(
     }
     default:
       assert(0 && "unhandled domain shader output");
+      std::abort();
       break;
     }
     break;
@@ -984,6 +1007,7 @@ void handle_signature_cs(
   switch (Inst.m_OpCode) {
   case D3D10_SB_OPCODE_DCL_INPUT_SGV: {
     assert(0 && "unhandled compute shader sgv");
+    std::abort();
     break;
   }
   case D3D10_SB_OPCODE_DCL_INPUT: {
@@ -1040,6 +1064,7 @@ void handle_signature_cs(
     }
     default:
       assert(0 && "unhandled compute shader input");
+      std::abort();
       break;
     }
     break;
@@ -1080,6 +1105,7 @@ handle_signature_gs(
     switch (sgv) {
     default:
       assert(0 && "Unexpected/unhandled geometry shader sgv");
+      std::abort();
       break;
     }
     break;
@@ -1094,6 +1120,7 @@ handle_signature_gs(
       break;
     default:
       assert(0 && "Unexpected/unhandled geometry shader siv");
+      std::abort();
       break;
     }
     break;
@@ -1110,12 +1137,14 @@ handle_signature_gs(
       break;
     default:
       assert(0 && "unhandled geometry shader input");
+      std::abort();
       break;
     }
     break;
   }
   case D3D10_SB_OPCODE_DCL_OUTPUT_SGV: {
     assert(0 && "unhandled geometry shader output sgv");
+    std::abort();
     break;
   }
   case D3D10_SB_OPCODE_DCL_OUTPUT_SIV: {
@@ -1164,6 +1193,7 @@ handle_signature_gs(
     }
     default:
       assert(0 && "Unexpected/unhandled geometry shader output siv");
+      std::abort();
       break;
     }
     max_output_register = std::max(reg + 1, max_output_register);
@@ -1195,6 +1225,7 @@ handle_signature_gs(
     }
     default:
       assert(0 && "unhandled geometry shader output");
+      std::abort();
       break;
     }
     break;

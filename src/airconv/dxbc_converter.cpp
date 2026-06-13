@@ -88,6 +88,7 @@ to_shader_scaler_type(microsoft::D3D10_SB_RESOURCE_RETURN_TYPE type) {
     break;
   }
   assert(0 && "invalid D3D10_SB_RESOURCE_RETURN_TYPE");
+  std::abort();
 }
 
 uint32_t next_pow2(uint32_t x) {

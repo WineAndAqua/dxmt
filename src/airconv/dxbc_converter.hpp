@@ -296,6 +296,7 @@ constexpr air::MSLScalerOrVectorType to_msl_type(RegisterComponentType type) {
   switch (type) {
   case RegisterComponentType::Unknown: {
     assert(0 && "unknown component type");
+    std::abort();
     break;
   }
   case RegisterComponentType::Uint:
@@ -304,7 +305,6 @@ constexpr air::MSLScalerOrVectorType to_msl_type(RegisterComponentType type) {
     return air::msl_int4;
   case RegisterComponentType::Float:
     return air::msl_float4;
-    break;
   }
 }
 

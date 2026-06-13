@@ -676,6 +676,7 @@ inline TextureKind to_air_resource_type(
     break;
   };
   assert(0 && "unreachable");
+  std::abort();
 };
 
 inline MSLScalerType
@@ -691,6 +692,7 @@ to_air_scaler_type(dxmt::shader::common::ScalerDataType type) {
     assert(0 && "");
     break;
   }
+  std::abort();
 }
 
 } // namespace dxmt::air
