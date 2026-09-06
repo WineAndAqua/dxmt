@@ -90,6 +90,7 @@ private:
   uint64_t gamma_version_ = 0;
   std::array<float, DXMT_GAMMA_CP_COUNT * 4> gamma_lut_rgba_;
   WMT::Reference<WMT::Texture> gamma_lut_texture_;
+  WMT::Reference<WMT::Texture> hud_texture_;
   WMT::Reference<WMT::RenderPipelineState> present_blit_;
   WMT::Reference<WMT::RenderPipelineState> present_scale_;
   std::atomic_flag pso_valid = 0;

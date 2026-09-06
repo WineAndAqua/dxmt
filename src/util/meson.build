@@ -22,6 +22,8 @@ util_src = files([
 
   'sha1/sha1.c',
   'sha1/sha1_util.cpp',
+
+  'hud_font.cpp',
 ])
 
 if not dxmt_crossbuild

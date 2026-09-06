@@ -4,7 +4,7 @@
 #include "dxmt_format.hpp"
 #include "dxmt_presenter.hpp"
 #include "util_likely.hpp"
-
+#include "hud_font.hpp"
 
 namespace dxmt {
 
@@ -32,6 +32,18 @@ Presenter::Presenter(WMT::Device device, WMT::MetalLayer layer, InternalCommandL
   texture_info.sample_count = 1;
   texture_info.array_length = 1;
   gamma_lut_texture_ = device.newTexture(texture_info);
+
+  texture_info.type = WMTTextureType2D;
+  texture_info.pixel_format = WMTPixelFormatR8Unorm;
+  texture_info.usage = WMTTextureUsageShaderRead;
+  texture_info.options = WMTResourceStorageModeShared;
+  texture_info.width = g_hudFont.width;
+  texture_info.height = g_hudFont.height;
+  texture_info.depth = 1;
+  texture_info.mipmap_level_count = 1;
+  texture_info.sample_count = 1;
+  texture_info.array_length = 1;
+  hud_texture_ = device.newTexture(texture_info);
 }
 
 bool
