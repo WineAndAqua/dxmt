@@ -403,7 +403,7 @@ public:
 
     auto state = presenter->synchronizeLayerProperties();
     auto drawable = presenter->encodeCommands(
-        cmdbuf, view.texture, state.metadata,
+        cmdbuf, view.texture, state.metadata, state.hud_data,
         [&](auto encoder) { encoder.waitForFence(fence_, WMTRenderStageFragment); },
         [&](auto encoder) { encoder.updateFence(fence_, WMTRenderStageFragment); }
     );

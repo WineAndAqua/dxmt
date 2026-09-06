@@ -530,7 +530,7 @@ ArgumentEncodingContext::resolveTexture(
 };
 
 void
-ArgumentEncodingContext::present(Rc<Texture> &texture, Rc<Presenter> &presenter, double after, DXMTPresentMetadata metadata) {
+ArgumentEncodingContext::present(Rc<Texture> &texture, Rc<Presenter> &presenter, double after, DXMTPresentMetadata metadata, DXMTPresentHUDData hud_data) {
   assert(!encoder_current);
   auto encoder_info = allocate<PresentData>();
   encoder_info->type = EncoderType::Present;
@@ -540,6 +540,7 @@ ArgumentEncodingContext::present(Rc<Texture> &texture, Rc<Presenter> &presenter,
   encoder_info->presenter = presenter;
   encoder_info->after = after;
   encoder_info->metadata = metadata;
+  encoder_info->hud_data = hud_data;
 
   encoder_current = encoder_info;
   encoder_info->backbuffer = access(texture, texture->fullView, ResourceAccess::Read).texture;
@@ -1088,7 +1089,7 @@ ArgumentEncodingContext::flushCommands(WMT::CommandBuffer cmdbuf, uint64_t seqId
       auto data = static_cast<PresentData *>(current);
       auto t0 = clock::now();
       auto drawable = data->presenter->encodeCommands(
-          cmdbuf, data->backbuffer, data->metadata,
+          cmdbuf, data->backbuffer, data->metadata, data->hud_data,
           [&](WMT::RenderCommandEncoder encoder) {
             data->fence_wait.forEach([&](auto id) { encoder.waitForFence(fence_pool_[id], WMTRenderStageFragment); });
           },
