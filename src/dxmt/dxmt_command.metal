@@ -251,6 +251,24 @@ struct present_data {
   return output;
 }
 
+struct DXMTPresentHUDData {
+  float x;
+  float y;
+  float width;
+  float height;
+};
+
+[[vertex]] present_data vs_hud_quad(
+  ushort id [[vertex_id]],
+  constant DXMTPresentHUDData &hud_data [[buffer(0)]]
+) {
+  present_data output;
+  float2 uv = float2((id << 1) & 2, id & 2);
+	output.position = float4(uv * float2(2, -2) + float2(-1, 1), 0, 1);
+  output.uv = uv;
+  return output;
+}
+
 constant constexpr float PQ_M1 = 0.1593017578125;
 constant constexpr float PQ_M2 = 78.84375;
 constant constexpr float PQ_C1 = 0.8359375;
@@ -306,6 +324,7 @@ constant bool present_gamma_enabled [[function_constant(kPresentFCIndex_GammaEna
 
 constexpr sampler s(coord::normalized);
 constexpr sampler gamma_sampler(coord::normalized, filter::linear, address::clamp_to_edge);
+constexpr sampler hud_sampler(coord::normalized, filter::linear, address::clamp_to_edge);
 
 struct DXMTPresentMetadata {
   float edr_scale;
@@ -370,6 +389,13 @@ float3 to_srgb(float3 linear) {
   else if (present_with_hdr_metadata)
     output_rgb = output_rgb / 80;
   return float4(output_rgb, output.w);
+}
+
+[[fragment]] float4 fs_hud_quad(
+    present_data input [[stage_in]],
+    texture2d<float, access::sample> font_bitmap [[texture(0)]]
+) {
+  return float4(1, 1, 1, font_bitmap.sample(hud_sampler, input.uv).r);
 }
 
 struct DXMTDispatchArguments {

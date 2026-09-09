@@ -44,6 +44,10 @@ Presenter::Presenter(WMT::Device device, WMT::MetalLayer layer, InternalCommandL
   texture_info.sample_count = 1;
   texture_info.array_length = 1;
   hud_texture_ = device.newTexture(texture_info);
+  hud_texture_.replaceRegion(
+      {0, 0, 0}, {g_hudFont.width, g_hudFont.height, 1},
+      0, 0, g_hudFont.texture, g_hudFont.width, 0
+      );
 }
 
 bool
@@ -134,11 +138,13 @@ Presenter::synchronizeLayerProperties() {
   if (unlikely(!pso_valid.test_and_set())) {
     frame_presented_.wait(frame_requested_);
     buildRenderPipelineState(final_colorspace == WMTColorSpaceHDR_PQ, is_hdr && hdr_metadata != nullptr, sample_count_ > 1, gamma_version_ != 0);
+    buildHUDPipelineState();
     layer_.setProps(layer_props_);
     layer_.setColorSpace(final_colorspace);
   }
 
   DXMTPresentMetadata metadata;
+  DXMTPresentHUDData hud_data;
 
   metadata.edr_scale = 1.0;
   metadata.max_content_luminance = 10000;
@@ -159,12 +165,12 @@ Presenter::synchronizeLayerProperties() {
   if (final_colorspace == WMTColorSpaceHDR_scRGB)
     metadata.edr_scale *= 0.8;
 
-  return {metadata, ++frame_requested_, this};
+  return {metadata, hud_data, ++frame_requested_, this};
 }
 
 WMT::MetalDrawable
 Presenter::encodeCommands(
-    WMT::CommandBuffer cmdbuf, WMT::Texture backbuffer, DXMTPresentMetadata metadata,
+    WMT::CommandBuffer cmdbuf, WMT::Texture backbuffer, DXMTPresentMetadata metadata, DXMTPresentHUDData hud_data,
     std::function<void(WMT::RenderCommandEncoder)> &&wait_fences,
     std::function<void(WMT::RenderCommandEncoder)> &&update_fences
 ) {
@@ -192,6 +198,18 @@ Presenter::encodeCommands(
   encoder.setViewport({0, 0, width, height, 0, 1});
   encoder.drawPrimitives(WMTPrimitiveTypeTriangle, 0, 3);
   update_fences(encoder);
+  encoder.endEncoding();
+
+  WMT::InitializeRenderPassInfo(info);
+  info.colors[0].load_action = WMTLoadActionLoad;
+  info.colors[0].store_action = WMTStoreActionStore;
+  info.colors[0].texture = drawable.texture();
+  encoder = cmdbuf.renderCommandEncoder(info);
+  encoder.setFragmentTexture(hud_texture_, 0);
+  encoder.setFragmentBytes(&hud_data, sizeof(hud_data), 0);
+  encoder.setRenderPipelineState(present_hud_);
+  encoder.setViewport({0, 0, width, height, 0, 1});
+  encoder.drawPrimitives(WMTPrimitiveTypeTriangle, 0, 3);
   encoder.endEncoding();
 
   return drawable;
@@ -240,6 +258,27 @@ Presenter::buildRenderPipelineState(bool is_pq, bool with_hdr_metadata, bool is_
     present_blit_ = device_.newRenderPipelineState(present_pipeline, error);
     present_pipeline.fragment_function = fs_present_quad_scaled;
     present_scale_ = device_.newRenderPipelineState(present_pipeline, error);
+  }
+}
+
+void
+Presenter::buildHUDPipelineState() {
+  WMT::Reference<WMT::Error> error;
+
+  auto pool = WMT::MakeAutoreleasePool();
+  auto library = lib_.getLibrary();
+  auto vs_hud_quad = library.newFunction("vs_hud_quad");
+  auto fs_hud_quad = library.newFunction("fs_hud_quad");
+  {
+    WMTRenderPipelineInfo hud_pipeline;
+    WMT::InitializeRenderPipelineInfo(hud_pipeline);
+    hud_pipeline.colors[0].pixel_format = layer_props_.pixel_format;
+    hud_pipeline.colors[0].blending_enabled = true;
+    hud_pipeline.colors[0].dst_alpha_blend_factor = WMTBlendFactorOneMinusSourceAlpha;
+    hud_pipeline.colors[0].dst_rgb_blend_factor = WMTBlendFactorOneMinusSourceAlpha;
+    hud_pipeline.vertex_function = vs_hud_quad;
+    hud_pipeline.fragment_function = fs_hud_quad;
+    present_hud_ = device_.newRenderPipelineState(hud_pipeline, error);
   }
 }
 

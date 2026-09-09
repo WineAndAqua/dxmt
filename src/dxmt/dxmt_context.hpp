@@ -251,6 +251,7 @@ struct PresentData : EncoderData {
   Rc<Presenter> presenter;
   double after;
   DXMTPresentMetadata metadata;
+  DXMTPresentHUDData hud_data;
 };
 
 struct SpatialUpscaleData : EncoderData {
@@ -665,7 +666,7 @@ public:
     return (new (allocate_cpu_heap(sizeof(T), alignof(T))) T());
   };
 
-  void present(Rc<Texture> &texture, Rc<Presenter> &presenter, double after, DXMTPresentMetadata metadata);
+  void present(Rc<Texture> &texture, Rc<Presenter> &presenter, double after, DXMTPresentMetadata metadata, DXMTPresentHUDData hud_data);
 
   void upscale(Rc<Texture> &texture, Rc<Texture> &upscaled, Rc<SpatialScaler> &scaler);
 

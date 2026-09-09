@@ -14,6 +14,13 @@ struct DXMTPresentMetadata {
   float max_display_luminance;
 };
 
+struct DXMTPresentHUDData {
+  float x;
+  float y;
+  float width;
+  float height;
+};
+
 constexpr uint32_t DXMT_GAMMA_CP_COUNT = 1024;
 
 struct DXMTGammaRamp {
@@ -42,15 +49,18 @@ public:
   class PresentState {
   public:
     DXMTPresentMetadata metadata;
+    DXMTPresentHUDData hud_data;
     uint64_t frame_id;
     Presenter *presenter;
-    PresentState(DXMTPresentMetadata metadata, uint64_t frame_id, Presenter *presenter) :
+    PresentState(DXMTPresentMetadata metadata, DXMTPresentHUDData hud_data, uint64_t frame_id, Presenter *presenter) :
         metadata(metadata),
+        hud_data(hud_data),
         frame_id(frame_id),
         presenter(presenter) {}
     PresentState(const PresentState &copy) = delete;
-    PresentState(PresentState &&move)  {
+    PresentState(PresentState &&move) {
       metadata = move.metadata;
+      hud_data = move.hud_data;
       frame_id = move.frame_id;
       presenter = move.presenter;
       move.presenter = nullptr;
@@ -66,13 +76,14 @@ public:
   PresentState synchronizeLayerProperties();
 
   WMT::MetalDrawable encodeCommands(
-      WMT::CommandBuffer cmdbuf, WMT::Texture backbuffer, DXMTPresentMetadata metadata,
+      WMT::CommandBuffer cmdbuf, WMT::Texture backbuffer, DXMTPresentMetadata metadata, DXMTPresentHUDData hud_data,
       std::function<void(WMT::RenderCommandEncoder)> &&wait_fences,
       std::function<void(WMT::RenderCommandEncoder)> &&update_fences
   );
 
 private:
   void buildRenderPipelineState(bool is_pq, bool with_hdr_metadata, bool is_ms, bool gamma_enable);
+  void buildHUDPipelineState();
 
   WMT::Device device_;
   WMT::MetalLayer layer_;
@@ -93,6 +104,7 @@ private:
   WMT::Reference<WMT::Texture> hud_texture_;
   WMT::Reference<WMT::RenderPipelineState> present_blit_;
   WMT::Reference<WMT::RenderPipelineState> present_scale_;
+  WMT::Reference<WMT::RenderPipelineState> present_hud_;
   std::atomic_flag pso_valid = 0;
   uint64_t frame_requested_ = 0;
   CpuFence frame_presented_ = 0;
